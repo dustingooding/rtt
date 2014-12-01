@@ -137,6 +137,7 @@ namespace RTT
             //stop_rt_timer();
             rt_task_delete(main_task->rtaitask);
             free(main_task->name);
+            main_task->name = 0;
             munlockall();
             return 0;
         }
@@ -340,6 +341,7 @@ namespace RTT
                 Logger::log() << Logger::Critical << "Failed to join "<< mytask->name <<"."<< Logger::endl;
 
             free( mytask->name );
+            mytask->name = 0;
             // rt_task_delete is done in wrapper !
         }
 
@@ -384,6 +386,12 @@ namespace RTT
         {
             return t->name;
         }
+
+        INTERNAL_QUAL void rtos_task_set_name(RTOS_TASK* t, const char * name)
+	{
+            if(t->name) free(t->name);
+	    t->name = strndup(name, 255);
+	}
 
         INTERNAL_QUAL int rtos_task_get_priority(const RTOS_TASK *t)
         {
